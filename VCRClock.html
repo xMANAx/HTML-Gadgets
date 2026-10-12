@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head><style>body{background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;margin:0}</style></head>
+<body>
+<canvas id="c" width="420" height="150"></canvas>
+<script>
+const c=document.getElementById('c'),g=c.getContext('2d');
+const t=8,b=5;
+const S=[['h',17,0,36],['v',52,8,38],['v',52,54,38],['h',17,92,36],['v',10,54,38],['v',10,8,38],['h',17,46,36]];
+const D=[63,6,91,79,102,109,125,7,127,111];
+const days=['MON','TUE','WED','THUR','FRI','SAT','SUN'];
+const dayIdx=[1,2,3,4,5,6,0];
+function seg(s,ox){
+  const[ty,x,y,l]=s;g.beginPath();
+  if(ty==='h'){g.moveTo(x+ox+b,y);g.lineTo(x+ox+l-b,y);g.lineTo(x+ox+l,y+t/2);g.lineTo(x+ox+l-b,y+t);g.lineTo(x+ox+b,y+t);g.lineTo(x+ox,y+t/2)}
+  else{g.moveTo(x+ox,y+b);g.lineTo(x+ox+t/2,y);g.lineTo(x+ox+t,y+b);g.lineTo(x+ox+t,y+l-b);g.lineTo(x+ox+t/2,y+l);g.lineTo(x+ox,y+l-b)}
+  g.closePath();g.fill();
+}
+function d(n,x){for(let i=0;i<7;i++){const on=D[n]>>i&1;g.shadowBlur=on?12:0;g.fillStyle=on?'#0f0':'#010';seg(S[i],x)}}
+function bl(x){g.shadowBlur=0;g.fillStyle='#010';for(let i=0;i<7;i++)seg(S[i],x)}
+function t2(){
+  const n=new Date(),h=n.getHours()%12||12,m=n.getMinutes(),pm=n.getHours()>=12;
+  g.clearRect(0,0,420,150);g.shadowColor='#0f0';
+  if(h<10){bl(10);d(h,85)}else{d(Math.floor(h/10),10);d(h%10,85)}
+  if(n.getSeconds()%2===0){g.fillStyle='#0f0';g.shadowBlur=12;g.fillRect(168,20,8,15);g.fillRect(168,65,8,15)}
+  d(Math.floor(m/10),190);d(m%10,265);
+  g.font='16px monospace';
+  g.shadowBlur=pm?0:12;g.fillStyle=pm?'#010':'#0f0';
+  g.fillText('AM',340,25);
+  g.shadowBlur=pm?12:0;g.fillStyle=pm?'#0f0':'#010';
+  g.fillText('PM',340,48);
+  g.font='14px monospace';g.textAlign='center';
+  for(let i=0;i<7;i++){
+    const on=n.getDay()===dayIdx[i];
+    g.shadowBlur=on?12:0;g.fillStyle=on?'#0f0':'#010';
+    g.fillText(days[i],30+i*60,135);
+  }
+  g.textAlign='left';
+}
+setInterval(t2,1000);t2();
+</script>
+</body>
+</html>
